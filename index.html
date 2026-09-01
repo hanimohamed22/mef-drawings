@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ملفات الشغل</title>
+<style>
+  :root{
+    --ink:#1c2530;
+    --ink-soft:#5b6673;
+    --paper:#f6f4ef;
+    --card:#ffffff;
+    --line:#e3ddd0;
+    --accent:#2f5d50;
+    --accent-soft:#e6efe9;
+    --danger:#a4392f;
+    --danger-soft:#f6e9e7;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Segoe UI", Tahoma, Arial, sans-serif;
+    line-height:1.55;
+  }
+  header{
+    padding:28px 24px 20px;
+    border-bottom:1px solid var(--line);
+    background:var(--card);
+  }
+  header h1{
+    margin:0 0 4px;
+    font-size:22px;
+    font-weight:700;
+  }
+  header p{
+    margin:0;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+  .master-strip{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:14px;
+  }
+  .badge{
+    font-size:12px;
+    padding:4px 10px;
+    border-radius:999px;
+    background:var(--accent-soft);
+    color:var(--accent);
+    font-weight:600;
+  }
+  main{
+    max-width:760px;
+    margin:0 auto;
+    padding:24px 20px 80px;
+  }
+  section{margin-bottom:28px;}
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px;
+  }
+  h2{
+    font-size:15px;
+    margin:0 0 14px;
+    color:var(--ink);
+    font-weight:700;
+  }
+  label{
+    display:block;
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:0 0 6px;
+  }
+  input[type=text], input[type=password], textarea{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:14px;
+    font-family:inherit;
+    background:#fdfcfa;
+    color:var(--ink);
+  }
+  input[type=text]:focus, input[type=password]:focus, textarea:focus{
+    outline:none;
+    border-color:var(--accent);
+  }
+  textarea{resize:vertical;min-height:56px;}
+  .field{margin-bottom:12px;}
+  .file-drop{
+    border:1.5px dashed var(--line);
+    border-radius:8px;
+    padding:20px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:13px;
+    cursor:pointer;
+    background:#fdfcfa;
+  }
+  .file-drop.has-file{
+    border-color:var(--accent);
+    color:var(--ink);
+  }
+  input[type=file]{display:none;}
+  button{
+    font-family:inherit;
+    font-size:14px;
+    font-weight:600;
+    border:none;
+    border-radius:8px;
+    padding:10px 18px;
+    cursor:pointer;
+    background:var(--accent);
+    color:#fff;
+  }
+  button:disabled{opacity:.5;cursor:not-allowed;}
+  button.ghost{
+    background:transparent;
+    color:var(--accent);
+    border:1px solid var(--accent);
+    padding:9px 16px;
+  }
+  button.danger{background:var(--danger);}
+  button.small{
+    padding:6px 12px;
+    font-size:12.5px;
+  }
+  .row{display:flex;gap:10px;flex-wrap:wrap;}
+  .file-item{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    margin-bottom:10px;
+    background:var(--card);
+  }
+  .file-item .top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .file-name{
+    font-weight:700;
+    font-size:15px;
+    word-break:break-word;
+  }
+  .file-meta{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:2px;
+  }
+  .file-note{
+    font-size:13.5px;
+    color:var(--ink);
+    margin-top:8px;
+    background:#fbf9f4;
+    border-radius:6px;
+    padding:8px 10px;
+    white-space:pre-wrap;
+  }
+  .file-actions{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+  }
+  a.download{
+    display:inline-block;
+    text-decoration:none;
+    color:var(--accent);
+    font-weight:600;
+    font-size:13.5px;
+    border:1px solid var(--accent);
+    padding:6px 14px;
+    border-radius:7px;
+  }
+  .empty{
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:13.5px;
+    padding:30px 10px;
+  }
+  .msg{
+    font-size:13px;
+    padding:9px 12px;
+    border-radius:7px;
+    margin-top:10px;
+  }
+  .msg.err{background:var(--danger-soft);color:var(--danger);}
+  .msg.ok{background:var(--accent-soft);color:var(--accent);}
+  .edit-box{
+    margin-top:10px;
+    border-top:1px dashed var(--line);
+    padding-top:10px;
+  }
+  .modal-bg{
+    position:fixed;inset:0;background:rgba(20,20,20,.4);
+    display:flex;align-items:center;justify-content:center;
+    z-index:50;padding:16px;
+  }
+  .modal{
+    background:#fff;border-radius:12px;padding:22px;max-width:360px;width:100%;
+  }
+  .modal h3{margin:0 0 14px;font-size:16px;}
+  .modal .row{justify-content:flex-end;margin-top:16px;}
+  .spinner{
+    display:inline-block;width:14px;height:14px;border:2px solid #fff;
+    border-top-color:transparent;border-radius:50%;
+    animation:spin .7s linear infinite;vertical-align:middle;margin-left:6px;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  footer{
+    text-align:center;color:var(--ink-soft);font-size:12px;padding:20px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ملفات الشغل</h1>
+  <p>ارفع ملفاتك هنا بدل ما تبعتها لبعض. أي حد يقدر يرفع، والماستر بس يقدر يعدّل أو يمسح.</p>
+  <div class="master-strip">
+    <span id="masterBadge" class="badge" style="display:none;">وضع الماستر مفعّل</span>
+    <button id="masterBtn" class="ghost small" type="button">دخول الماستر</button>
+    <button id="logoutBtn" class="ghost small" type="button" style="display:none;">خروج</button>
+    <button id="changePassBtn" class="ghost small" type="button" style="display:none;">تغيير الباسورد</button>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <div class="card">
+      <h2>رفع ملف جديد</h2>
+      <form id="uploadForm">
+        <div class="field">
+          <label>اختار الملف</label>
+          <div id="fileDrop" class="file-drop">اضغط هنا واختار الملف</div>
+          <input type="file" id="fileInput">
+        </div>
+        <div class="field">
+          <label>اسم الملف</label>
+          <input type="text" id="displayName" placeholder="اسم الملف زي ما تحب يظهر">
+        </div>
+        <div class="field">
+          <label>ملحوظة (اختياري)</label>
+          <textarea id="noteInput" placeholder="أي ملحوظة عن الملف..."></textarea>
+        </div>
+        <button type="submit" id="uploadBtn">رفع الملف</button>
+        <div id="uploadMsg"></div>
+      </form>
+    </div>
+  </section>
+
+  <section>
+    <h2 style="padding:0 4px;">الملفات (<span id="fileCount">0</span>)</h2>
+    <div id="fileList"></div>
+  </section>
+
+</main>
+
+<footer>يشتغل مباشرة على GitHub — hanimohamed22/mef-drawings</footer>
+
+<div id="modalRoot"></div>
+
+<script>
+/* ========= إعدادات لازم تظبطها ========= */
+const GH_OWNER  = "hanimohamed22";
+const GH_REPO   = "mef-drawings";
+const GH_BRANCH = "main"; // غيّرها لو الـ branch مختلف
+const GH_TOKEN  = "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";
+/* ======================================== */
+
+const FILES_JSON_PATH = "files.json";
+const CONFIG_JSON_PATH = "config.json";
+const UPLOAD_DIR = "uploads";
+
+const API_BASE = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents`;
+
+let filesData = []; // {id, displayName, note, path, uploadedAt, size}
+let filesSha = null;
+let configData = null; // {passwordHash}
+let configSha = null;
+let isMaster = false;
+
+// ---------- Helpers ----------
+function b64Encode(str){
+  const bytes = new TextEncoder().encode(str);
+  let binary = "";
+  bytes.forEach(b => binary += String.fromCharCode(b));
+  return btoa(binary);
+}
+function b64Decode(b64){
+  const binary = atob(b64.replace(/\n/g, ""));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+async function sha256Hex(text){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+function ghHeaders(){
+  return {
+    "Authorization": `Bearer ${GH_TOKEN}`,
+    "Accept": "application/vnd.github+json"
+  };
+}
+async function ghGetJson(path){
+  const res = await fetch(`${API_BASE}/${path}?ref=${GH_BRANCH}&t=${Date.now()}`, { headers: ghHeaders() });
+  if (res.status === 404) return { data: null, sha: null };
+  if (!res.ok) throw new Error(`تعذّر تحميل ${path}`);
+  const json = await res.json();
+  const text = b64Decode(json.content);
+  return { data: JSON.parse(text), sha: json.sha };
+}
+async function ghPutJson(path, dataObj, sha, message){
+  const body = {
+    message,
+    content: b64Encode(JSON.stringify(dataObj, null, 2)),
+    branch: GH_BRANCH
+  };
+  if (sha) body.sha = sha;
+  const res = await fetch(`${API_BASE}/${path}`, {
+    method: "PUT",
+    headers: ghHeaders(),
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error(`فشل حفظ ${path}`);
+  const json = await res.json();
+  return json.content.sha;
+}
+async function ghPutFileBase64(path, base64Content, message, sha){
+  const body = { message, content: base64Content, branch: GH_BRANCH };
+  if (sha) body.sha = sha;
+  const res = await fetch(`${API_BASE}/${path}`, {
+    method: "PUT",
+    headers: ghHeaders(),
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error("فشل رفع الملف");
+  return res.json();
+}
+async function ghDeleteFile(path, sha, message){
+  const res = await fetch(`${API_BASE}/${path}`, {
+    method: "DELETE",
+    headers: ghHeaders(),
+    body: JSON.stringify({ message, sha, branch: GH_BRANCH })
+  });
+  if (!res.ok) throw new Error("فشل مسح الملف");
+}
+function rawUrl(path){
+  return `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${encodeURIComponent(path).replace(/%2F/g, "/")}`;
+}
+function readFileAsBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(",")[1]);
+    reader.onerror = () => reject(new Error("تعذّرت قراءة الملف"));
+    reader.readAsDataURL(file);
+  });
+}
+function sanitizeFilename(name){
+  return name.replace(/[^\w.\-\u0600-\u06FF ]/g, "_");
+}
+function fmtDate(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString("ar-EG", { year: "numeric", month: "short", day: "numeric" }) +
+    " - " + d.toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" });
+}
+function fmtSize(bytes){
+  if (bytes < 1024) return bytes + " بايت";
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + " كيلوبايت";
+  return (bytes/1024/1024).toFixed(1) + " ميجا";
+}
+
+// ---------- Load data ----------
+async function loadAll(){
+  const fl = document.getElementById("fileList");
+  fl.innerHTML = `<div class="empty">جاري التحميل...</div>`;
+  try{
+    const f = await ghGetJson(FILES_JSON_PATH);
+    filesData = f.data || [];
+    filesSha = f.sha;
+    const c = await ghGetJson(CONFIG_JSON_PATH);
+    configData = c.data;
+    configSha = c.sha;
+  }catch(e){
+    fl.innerHTML = `<div class="msg err">${e.message}. تأكد إن التوكن والريبو والـ branch مظبوطين.</div>`;
+    return;
+  }
+  renderFiles();
+}
+
+function renderFiles(){
+  const fl = document.getElementById("fileList");
+  document.getElementById("fileCount").textContent = filesData.length;
+  if (filesData.length === 0){
+    fl.innerHTML = `<div class="empty">لسه مفيش ملفات مرفوعة.</div>`;
+    return;
+  }
+  const sorted = [...filesData].sort((a,b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+  fl.innerHTML = "";
+  sorted.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "file-item";
+    div.innerHTML = `
+      <div class="top">
+        <div>
+          <div class="file-name">${escapeHtml(item.displayName)}</div>
+          <div class="file-meta">${fmtDate(item.uploadedAt)} • ${fmtSize(item.size || 0)}</div>
+        </div>
+      </div>
+      ${item.note ? `<div class="file-note">${escapeHtml(item.note)}</div>` : ""}
+      <div class="file-actions">
+        <a class="download" href="${rawUrl(item.path)}" target="_blank" rel="noopener">تحميل</a>
+        ${isMaster ? `
+          <button class="ghost small" data-act="edit" data-id="${item.id}" type="button">تعديل</button>
+          <button class="danger small" data-act="delete" data-id="${item.id}" type="button">مسح</button>
+        ` : ""}
+      </div>
+      <div class="edit-box" id="edit-${item.id}" style="display:none;"></div>
+    `;
+    fl.appendChild(div);
+  });
+  fl.querySelectorAll("[data-act=edit]").forEach(b => b.addEventListener("click", () => openEdit(b.dataset.id)));
+  fl.querySelectorAll("[data-act=delete]").forEach(b => b.addEventListener("click", () => confirmDelete(b.dataset.id)));
+}
+function escapeHtml(s){
+  return (s || "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+}
+
+// ---------- Upload ----------
+const fileInput = document.getElementById("fileInput");
+const fileDrop = document.getElementById("fileDrop");
+fileDrop.addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", () => {
+  if (fileInput.files[0]){
+    fileDrop.textContent = fileInput.files[0].name;
+    fileDrop.classList.add("has-file");
+    if (!document.getElementById("displayName").value){
+      document.getElementById("displayName").value = fileInput.files[0].name;
+    }
+  }
+});
+
+document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const msgBox = document.getElementById("uploadMsg");
+  const btn = document.getElementById("uploadBtn");
+  msgBox.innerHTML = "";
+  const file = fileInput.files[0];
+  const displayName = document.getElementById("displayName").value.trim();
+  const note = document.getElementById("noteInput").value.trim();
+
+  if (!file){ msgBox.innerHTML = `<div class="msg err">اختار ملف الأول.</div>`; return; }
+  if (!displayName){ msgBox.innerHTML = `<div class="msg err">اكتب اسم للملف.</div>`; return; }
+
+  btn.disabled = true;
+  btn.innerHTML = `جاري الرفع <span class="spinner"></span>`;
+  try{
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+    const storedPath = `${UPLOAD_DIR}/${id}__${sanitizeFilename(file.name)}`;
+    const base64 = await readFileAsBase64(file);
+    await ghPutFileBase64(storedPath, base64, `رفع ملف: ${displayName}`);
+
+    // refresh files.json sha before writing to avoid stale sha conflicts
+    const fresh = await ghGetJson(FILES_JSON_PATH);
+    filesData = fresh.data || [];
+    filesSha = fresh.sha;
+
+    filesData.push({
+      id, displayName, note,
+      path: storedPath,
+      uploadedAt: new Date().toISOString(),
+      size: file.size
+    });
+    filesSha = await ghPutJson(FILES_JSON_PATH, filesData, filesSha, `تحديث القائمة: ${displayName}`);
+
+    msgBox.innerHTML = `<div class="msg ok">تم رفع الملف بنجاح.</div>`;
+    e.target.reset();
+    fileDrop.textContent = "اضغط هنا واختار الملف";
+    fileDrop.classList.remove("has-file");
+    renderFiles();
+  }catch(err){
+    msgBox.innerHTML = `<div class="msg err">${err.message}</div>`;
+  }finally{
+    btn.disabled = false;
+    btn.textContent = "رفع الملف";
+  }
+});
+
+// ---------- Master mode ----------
+function openModal(html){
+  const root = document.getElementById("modalRoot");
+  root.innerHTML = `<div class="modal-bg"><div class="modal">${html}</div></div>`;
+  return root.querySelector(".modal-bg");
+}
+function closeModal(){ document.getElementById("modalRoot").innerHTML = ""; }
+
+document.getElementById("masterBtn").addEventListener("click", () => {
+  if (!configData){
+    // أول مرة: تعيين باسورد
+    const bg = openModal(`
+      <h3>تعيين باسورد الماستر (أول مرة)</h3>
+      <div class="field"><input type="password" id="newPass1" placeholder="اكتب باسورد جديد"></div>
+      <div id="setupMsg"></div>
+      <div class="row">
+        <button class="ghost" type="button" id="cancelSetup">إلغاء</button>
+        <button type="button" id="confirmSetup">حفظ</button>
+      </div>
+    `);
+    bg.querySelector("#cancelSetup").addEventListener("click", closeModal);
+    bg.querySelector("#confirmSetup").addEventListener("click", async () => {
+      const val = bg.querySelector("#newPass1").value;
+      const m = bg.querySelector("#setupMsg");
+      if (!val || val.length < 4){ m.innerHTML = `<div class="msg err">الباسورد لازم 4 حروف/أرقام على الأقل.</div>`; return; }
+      try{
+        const hash = await sha256Hex(val);
+        configSha = await ghPutJson(CONFIG_JSON_PATH, { passwordHash: hash }, configSha, "تعيين باسورد الماستر");
+        configData = { passwordHash: hash };
+        closeModal();
+        setMaster(true);
+      }catch(e){ m.innerHTML = `<div class="msg err">${e.message}</div>`; }
+    });
+    return;
+  }
+
+  const bg = openModal(`
+    <h3>دخول الماستر</h3>
+    <div class="field"><input type="password" id="masterPass" placeholder="الباسورد"></div>
+    <div id="loginMsg"></div>
+    <div class="row">
+      <button class="ghost" type="button" id="cancelLogin">إلغاء</button>
+      <button type="button" id="confirmLogin">دخول</button>
+    </div>
+  `);
+  bg.querySelector("#cancelLogin").addEventListener("click", closeModal);
+  bg.querySelector("#confirmLogin").addEventListener("click", async () => {
+    const val = bg.querySelector("#masterPass").value;
+    const hash = await sha256Hex(val);
+    if (hash === configData.passwordHash){
+      closeModal();
+      setMaster(true);
+    }else{
+      bg.querySelector("#loginMsg").innerHTML = `<div class="msg err">الباسورد غلط.</div>`;
+    }
+  });
+});
+
+document.getElementById("logoutBtn").addEventListener("click", () => setMaster(false));
+
+function setMaster(val){
+  isMaster = val;
+  document.getElementById("masterBadge").style.display = val ? "inline-block" : "none";
+  document.getElementById("masterBtn").style.display = val ? "none" : "inline-block";
+  document.getElementById("logoutBtn").style.display = val ? "inline-block" : "none";
+  document.getElementById("changePassBtn").style.display = val ? "inline-block" : "none";
+  renderFiles();
+}
+
+document.getElementById("changePassBtn").addEventListener("click", () => {
+  const bg = openModal(`
+    <h3>تغيير باسورد الماستر</h3>
+    <div class="field"><input type="password" id="cpOld" placeholder="الباسورد الحالي"></div>
+    <div class="field"><input type="password" id="cpNew" placeholder="الباسورد الجديد"></div>
+    <div id="cpMsg"></div>
+    <div class="row">
+      <button class="ghost" type="button" id="cpCancel">إلغاء</button>
+      <button type="button" id="cpConfirm">حفظ</button>
+    </div>
+  `);
+  bg.querySelector("#cpCancel").addEventListener("click", closeModal);
+  bg.querySelector("#cpConfirm").addEventListener("click", async () => {
+    const oldVal = bg.querySelector("#cpOld").value;
+    const newVal = bg.querySelector("#cpNew").value;
+    const m = bg.querySelector("#cpMsg");
+    const oldHash = await sha256Hex(oldVal);
+    if (oldHash !== configData.passwordHash){ m.innerHTML = `<div class="msg err">الباسورد الحالي غلط.</div>`; return; }
+    if (!newVal || newVal.length < 4){ m.innerHTML = `<div class="msg err">الباسورد الجديد لازم 4 حروف على الأقل.</div>`; return; }
+    try{
+      const newHash = await sha256Hex(newVal);
+      configSha = await ghPutJson(CONFIG_JSON_PATH, { passwordHash: newHash }, configSha, "تغيير باسورد الماستر");
+      configData = { passwordHash: newHash };
+      closeModal();
+    }catch(e){ m.innerHTML = `<div class="msg err">${e.message}</div>`; }
+  });
+});
+
+// ---------- Edit / delete (master only) ----------
+function openEdit(id){
+  const item = filesData.find(f => f.id === id);
+  if (!item) return;
+  const box = document.getElementById(`edit-${id}`);
+  box.style.display = "block";
+  box.innerHTML = `
+    <div class="field"><label>اسم الملف</label><input type="text" id="ed-name-${id}" value="${escapeHtml(item.displayName)}"></div>
+    <div class="field"><label>ملحوظة</label><textarea id="ed-note-${id}">${escapeHtml(item.note || "")}</textarea></div>
+    <div class="field"><label>استبدال الملف (اختياري)</label><input type="file" id="ed-file-${id}"></div>
+    <div id="ed-msg-${id}"></div>
+    <div class="row">
+      <button class="ghost small" type="button" id="ed-cancel-${id}">إلغاء</button>
+      <button class="small" type="button" id="ed-save-${id}">حفظ التعديل</button>
+    </div>
+  `;
+  document.getElementById(`ed-cancel-${id}`).addEventListener("click", () => { box.style.display = "none"; box.innerHTML=""; });
+  document.getElementById(`ed-save-${id}`).addEventListener("click", () => saveEdit(id));
+}
+
+async function saveEdit(id){
+  const msg = document.getElementById(`ed-msg-${id}`);
+  const newName = document.getElementById(`ed-name-${id}`).value.trim();
+  const newNote = document.getElementById(`ed-note-${id}`).value.trim();
+  const newFileInput = document.getElementById(`ed-file-${id}`);
+  if (!newName){ msg.innerHTML = `<div class="msg err">اكتب اسم للملف.</div>`; return; }
+  msg.innerHTML = `<div class="msg ok">جاري الحفظ...</div>`;
+  try{
+    const item = filesData.find(f => f.id === id);
+    let newPath = item.path;
+    let newSize = item.size;
+
+    if (newFileInput.files[0]){
+      const file = newFileInput.files[0];
+      // get current blob sha to overwrite, or create new path if name changed drastically
+      const existing = await ghGetJson(item.path).catch(() => ({ sha: null }));
+      const base64 = await readFileAsBase64(file);
+      newPath = `${UPLOAD_DIR}/${id}__${sanitizeFilename(file.name)}`;
+      if (newPath !== item.path){
+        // delete old, create new
+        try{
+          const res = await fetch(`${API_BASE}/${item.path}?ref=${GH_BRANCH}`, { headers: ghHeaders() });
+          if (res.ok){
+            const j = await res.json();
+            await ghDeleteFile(item.path, j.sha, `حذف نسخة قديمة: ${item.displayName}`);
+          }
+        }catch(_e){}
+        await ghPutFileBase64(newPath, base64, `استبدال ملف: ${newName}`);
+      }else{
+        await ghPutFileBase64(newPath, base64, `استبدال ملف: ${newName}`, existing.sha);
+      }
+      newSize = file.size;
+    }
+
+    const fresh = await ghGetJson(FILES_JSON_PATH);
+    filesData = fresh.data || [];
+    filesSha = fresh.sha;
+    const idx = filesData.findIndex(f => f.id === id);
+    if (idx >= 0){
+      filesData[idx] = { ...filesData[idx], displayName: newName, note: newNote, path: newPath, size: newSize };
+    }
+    filesSha = await ghPutJson(FILES_JSON_PATH, filesData, filesSha, `تعديل: ${newName}`);
+    renderFiles();
+  }catch(e){
+    msg.innerHTML = `<div class="msg err">${e.message}</div>`;
+  }
+}
+
+function confirmDelete(id){
+  const item = filesData.find(f => f.id === id);
+  if (!item) return;
+  const bg = openModal(`
+    <h3>تأكيد المسح</h3>
+    <p style="font-size:14px;">هتمسح "${escapeHtml(item.displayName)}" نهائي. متأكد؟</p>
+    <div class="row">
+      <button class="ghost" type="button" id="delCancel">إلغاء</button>
+      <button class="danger" type="button" id="delConfirm">مسح</button>
+    </div>
+  `);
+  bg.querySelector("#delCancel").addEventListener("click", closeModal);
+  bg.querySelector("#delConfirm").addEventListener("click", async () => {
+    try{
+      const res = await fetch(`${API_BASE}/${item.path}?ref=${GH_BRANCH}`, { headers: ghHeaders() });
+      if (res.ok){
+        const j = await res.json();
+        await ghDeleteFile(item.path, j.sha, `حذف ملف: ${item.displayName}`);
+      }
+      const fresh = await ghGetJson(FILES_JSON_PATH);
+      filesData = (fresh.data || []).filter(f => f.id !== id);
+      filesSha = await ghPutJson(FILES_JSON_PATH, filesData, fresh.sha, `حذف: ${item.displayName}`);
+      closeModal();
+      renderFiles();
+    }catch(e){
+      closeModal();
+      alert(e.message);
+    }
+  });
+}
+
+// ---------- init ----------
+loadAll();
+</script>
+</body>
+</html>
