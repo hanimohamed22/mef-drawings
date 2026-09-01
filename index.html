@@ -312,10 +312,18 @@ function ghHeaders(){
     "Accept": "application/vnd.github+json"
   };
 }
+async function ghApiError(res, fallback){
+  let detail = "";
+  try{
+    const j = await res.json();
+    detail = j.message || "";
+  }catch(_e){}
+  return new Error(`${fallback} (كود ${res.status})${detail ? " — " + detail : ""}`);
+}
 async function ghGetJson(path){
   const res = await fetch(`${API_BASE}/${path}?ref=${GH_BRANCH}&t=${Date.now()}`, { headers: ghHeaders() });
   if (res.status === 404) return { data: null, sha: null };
-  if (!res.ok) throw new Error(`تعذّر تحميل ${path}`);
+  if (!res.ok) throw await ghApiError(res, `تعذّر تحميل ${path}`);
   const json = await res.json();
   const text = b64Decode(json.content);
   return { data: JSON.parse(text), sha: json.sha };
@@ -329,10 +337,10 @@ async function ghPutJson(path, dataObj, sha, message){
   if (sha) body.sha = sha;
   const res = await fetch(`${API_BASE}/${path}`, {
     method: "PUT",
-    headers: ghHeaders(),
+    headers: { ...ghHeaders(), "Content-Type": "application/json" },
     body: JSON.stringify(body)
   });
-  if (!res.ok) throw new Error(`فشل حفظ ${path}`);
+  if (!res.ok) throw await ghApiError(res, `فشل حفظ ${path}`);
   const json = await res.json();
   return json.content.sha;
 }
@@ -341,19 +349,19 @@ async function ghPutFileBase64(path, base64Content, message, sha){
   if (sha) body.sha = sha;
   const res = await fetch(`${API_BASE}/${path}`, {
     method: "PUT",
-    headers: ghHeaders(),
+    headers: { ...ghHeaders(), "Content-Type": "application/json" },
     body: JSON.stringify(body)
   });
-  if (!res.ok) throw new Error("فشل رفع الملف");
+  if (!res.ok) throw await ghApiError(res, "فشل رفع الملف");
   return res.json();
 }
 async function ghDeleteFile(path, sha, message){
   const res = await fetch(`${API_BASE}/${path}`, {
     method: "DELETE",
-    headers: ghHeaders(),
+    headers: { ...ghHeaders(), "Content-Type": "application/json" },
     body: JSON.stringify({ message, sha, branch: GH_BRANCH })
   });
-  if (!res.ok) throw new Error("فشل مسح الملف");
+  if (!res.ok) throw await ghApiError(res, "فشل مسح الملف");
 }
 function rawUrl(path){
   return `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${encodeURIComponent(path).replace(/%2F/g, "/")}`;
