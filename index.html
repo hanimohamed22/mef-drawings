@@ -274,14 +274,16 @@
 const GH_OWNER  = "hanimohamed22";
 const GH_REPO   = "mef-drawings";
 const GH_BRANCH = "main"; // غيّرها لو الـ branch مختلف
-const GH_TOKEN  = "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";
+// حط هنا رابط الـ Worker بتاعك بعد النشر، من غير / في الآخر
+// مثال: "https://mef-proxy.username.workers.dev"
+const WORKER_URL = "https://rapid-poetry-b374.hanimohamed982001.workers.dev";
 /* ======================================== */
 
 const FILES_JSON_PATH = "files.json";
 const CONFIG_JSON_PATH = "config.json";
 const UPLOAD_DIR = "uploads";
 
-const API_BASE = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents`;
+const API_BASE = `${WORKER_URL}/api`;
 
 let filesData = []; // {id, displayName, note, path, uploadedAt, size}
 let filesSha = null;
@@ -308,7 +310,6 @@ async function sha256Hex(text){
 }
 function ghHeaders(){
   return {
-    "Authorization": `Bearer ${GH_TOKEN}`,
     "Accept": "application/vnd.github+json"
   };
 }
